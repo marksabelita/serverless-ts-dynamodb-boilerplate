@@ -12,8 +12,8 @@ interface IListInterface extends IProps {
 }
 
 export default class DynamoDBModel {
-    private _id: string;
-    private _name: string;
+    protected _id: string;
+    protected _name: string;
 
     constructor({ id = UUID(), name = ''}: IProps) {
         this._id = id;

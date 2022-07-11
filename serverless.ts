@@ -28,6 +28,7 @@ const serverlessConfiguration: AWS = {
       STAGE: '${self:custom.stage}',
       LIST_TABLE: '${self:custom.list_table}',
       TASKS_TABLE: '${self:custom.tasks_table}',
+      TALENTS_TABLE: '${self:custom.talents_table}',
     },
     iamRoleStatements: [
       {
@@ -69,6 +70,7 @@ const serverlessConfiguration: AWS = {
     stage: '${opt:stage, self:provider.stage}',
     list_table: '${self:service}-list-table-${opt:stage, self:provider.stage}',
     tasks_table: '${self:service}-tasks-table-${opt:stage, self:provider.stage}',
+    talents_table: '${self:service}-talents-table-${opt:stage, self:provider.stage}',
     table_throughputs: {
       prod: 5,
       default: 1,

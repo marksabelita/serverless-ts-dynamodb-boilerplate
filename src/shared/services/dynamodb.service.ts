@@ -1,29 +1,31 @@
 import DatabaseService from "./database.service";
 import { validateAgainstConstraints } from "../utils/validateAgainstConstraints";
-import DynamoDBModel from "../models/dynamodb.model";
+import BasesModelInterface from "../models/interface/basemodel.interface";
 
 class DynamoDbService  {
     protected databaseService: DatabaseService;
-    protected model: DynamoDBModel
+    protected model: BasesModelInterface;
     protected tableName: string; 
 
     public async getAll(details: any) {
-        const { 
-            indexName, 
-            conditionalExpersion, 
-            expressionAttributeValues, 
-            requestConstraints, 
-            data 
-        } = details
+        // const { 
+        //     indexName, 
+        //     conditionalExpersion, 
+        //     expressionAttributeValues, 
+        //     requestConstraints, 
+        //     data 
+        // } = details
 
         const params = {
             TableName: this.tableName,
-            IndexName : indexName,
-            KeyConditionExpression : conditionalExpersion,
-            ExpressionAttributeValues : expressionAttributeValues
+            IndexName: 'talent_index',
+            ExpressionAttributeNames: { '#name': 'name' },
+            KeyConditionExpression: '#name = :name',
+            ExpressionAttributeValues: { ':name': 'test' },
         };
 
-        await validateAgainstConstraints(data, requestConstraints);
+        // console.log(params);
+        // await validateAgainstConstraints(data, requestConstraints);
         return this.databaseService.query(params);
     }
     
@@ -36,10 +38,11 @@ class DynamoDbService  {
         return this.databaseService.get({Key: id, TableName: this.tableName});
     }
 
-    public async create(data: any) {
-        const { requestConstraints, details } = data;
+    public async create(details: any) {
+        const { requestConstraints, data } = details;
         const modelData = this.model.getEntityMappings();
-    
+        console.log(this.tableName);
+
         const params = {
             TableName: this.tableName,
             Item: {
@@ -51,9 +54,8 @@ class DynamoDbService  {
         }
 
         await validateAgainstConstraints(details, requestConstraints)
-
         await this.databaseService.create(params);
-        return data.id;
+        return modelData.id;
     }
 
     public async update(details: any) {

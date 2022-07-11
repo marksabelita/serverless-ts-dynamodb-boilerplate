@@ -4,18 +4,19 @@ import { v4 as UUID } from 'uuid';
 // Interfaces
 interface IProps {
     id?: string;
-    name: string;
+    name?: string;
+    test?: string
 }
 
 interface IListInterface extends IProps {
     timestamp: number;
 }
 
-export default class ListModel {
-    private _id: string;
-    private _name: string;
+export default class Model {
+    protected _id: string;
+    protected _name: string;
 
-    constructor({ id = UUID(), name = ''}: IProps) {
+    constructor({ id = UUID(), name = 'test'}: IProps) {
         this._id = id;
         this._name = name;
     }
@@ -59,9 +60,9 @@ export default class ListModel {
     getEntityMappings(): IListInterface {
         return {
             id: this.getId(),
+            test: 'marktest',
             name: this.getName(),
             timestamp: new Date().getTime(),
         };
     }
-
 }

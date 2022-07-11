@@ -48,18 +48,23 @@ AWS.config.update({ region: "eu-west-1" });
 const documentClient = new AWS.DynamoDB.DocumentClient();
 
 const config: IConfig = { region: "eu-west-1" };
+
 if (STAGE === DYNAMODB_LOCAL_STAGE) {
     config.accessKeyId = DYNAMODB_LOCAL_ACCESS_KEY_ID; // local dynamodb accessKeyId
     config.secretAccessKey = DYNAMODB_LOCAL_SECRET_ACCESS_KEY; // local dynamodb secretAccessKey
     config.endpoint = DYNAMODB_LOCAL_ENDPOINT; // local dynamodb endpoint
 }
+
+console.log(config, DYNAMODB_LOCAL_STAGE, STAGE);
 AWS.config.update(config);
 
 export default class DatabaseService {
     create = async(params: PutItem): Promise<PutItemOutput> => {
         try {
+            console.log(`create`);
             return await documentClient.put(params).promise();
         } catch (error) {
+            console.log(error);
             throw new ResponseModel({}, 500, `create-error: ${error}`);
         }
     }
@@ -99,6 +104,14 @@ export default class DatabaseService {
     delete = async (params: DeleteItem): Promise<DeleteItemOutput> => {
         try {
             return await documentClient.delete(params).promise();
+        } catch (error) {
+            throw new ResponseModel({}, 500, `delete-error: ${error}`);
+        }
+    }
+
+    scan = async (params: any) => {
+        try {
+            return await documentClient.scan(params).promise();
         } catch (error) {
             throw new ResponseModel({}, 500, `delete-error: ${error}`);
         }

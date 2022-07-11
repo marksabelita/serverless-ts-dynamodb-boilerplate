@@ -1,4 +1,38 @@
 export default {
+    TalentsTable: {
+        Type: 'AWS::DynamoDB::Table',
+        DeletionPolicy: 'Retain',
+        Properties: {
+            TableName: '${self:provider.environment.TALENTS_TABLE}',
+            AttributeDefinitions: [
+                { AttributeName: 'id', AttributeType: 'S' },
+                { AttributeName: 'name', AttributeType: 'S' }
+            ],
+            KeySchema: [
+                { AttributeName: 'id', KeyType: 'HASH' },
+                { AttributeName: 'name', KeyType: 'RANGE' }
+            ],
+            ProvisionedThroughput: {
+                ReadCapacityUnits: '${self:custom.table_throughput}',
+                WriteCapacityUnits: '${self:custom.table_throughput}'
+            },
+            GlobalSecondaryIndexes: [
+                {
+                    IndexName: 'talent_index',
+                    KeySchema: [
+                        { AttributeName: 'name', KeyType: 'HASH' },
+                    ],
+                    Projection: { // attributes to project into the index
+                        ProjectionType: 'ALL' // (ALL | KEYS_ONLY | INCLUDE)
+                    },
+                    ProvisionedThroughput: {
+                        ReadCapacityUnits: '${self:custom.table_throughput}',
+                        WriteCapacityUnits: '${self:custom.table_throughput}'
+                    },
+                }
+            ]
+        }
+    },
     ListTable: {
         Type: 'AWS::DynamoDB::Table',
         DeletionPolicy: 'Retain',
